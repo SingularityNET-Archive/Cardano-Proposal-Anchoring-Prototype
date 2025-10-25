@@ -6,6 +6,7 @@
 *.vkey
 wallet.json
 wallet_mnemonic.txt
+arweave_key.json
 
 # Python
 __pycache__/

@@ -1,13 +1,13 @@
 # Cardano Proposal Anchoring Prototype
 
-A minimal working Python prototype that anchors community proposals to the Cardano blockchain using Blockfrost and PyCardano. The system uploads proposals to IPFS, computes SHA256 hashes, and anchors them as metadata in Cardano transactions on the testnet.
+A minimal working Python prototype that anchors community proposals to the Cardano blockchain using Blockfrost and PyCardano. The system uploads proposals to Arweave for permanent storage, computes SHA256 hashes, and anchors them as metadata in Cardano transactions on the testnet.
 
 ## 🏗️ Architecture
 
 ```
-Proposal JSON → IPFS Upload → Hash Computation → Cardano Transaction → Blockchain
+Proposal JSON → Arweave Upload → Hash Computation → Cardano Transaction → Blockchain
      ↓              ↓              ↓                    ↓              ↓
-   JSON File    IPFS CID      SHA256 Hash         Metadata         On-chain
+   JSON File    Arweave TX ID   SHA256 Hash         Metadata         On-chain
 ```
 
 ## 🚀 Quick Start
@@ -55,11 +55,11 @@ METADATA_LABEL=1337
 3. Create a new project for Cardano testnet
 4. Copy your API key to `.env`
 
-#### Infura IPFS Credentials
-1. Visit [Infura.io](https://infura.io/)
-2. Sign up for a free account
-3. Create a new project and select "IPFS" as the service
-4. Copy your Project ID and Secret to `.env`
+#### Arweave Wallet
+1. Visit [Arweave.org](https://www.arweave.org/)
+2. Download the Arweave wallet or use [ArConnect](https://arconnect.io/)
+3. Create a new wallet and save the key file as `arweave_key.json`
+4. Fund your wallet with AR tokens (see funding instructions below)
 
 ### 4. Generate Wallet
 
@@ -72,12 +72,18 @@ This will create:
 - `wallet.json` - Wallet keys (keep secure!)
 - `wallet_mnemonic.txt` - Recovery phrase (keep secure!)
 
-### 5. Fund Your Wallet
+### 5. Fund Your Wallets
 
+#### Cardano Wallet (for transaction fees)
 1. Copy the payment address from the wallet generation output
 2. Visit the [Cardano Testnet Faucet](https://testnets.cardano.org/en/testnets/cardano/tools/faucet/)
 3. Request testnet ADA for your address
 4. Wait for the transaction to confirm
+
+#### Arweave Wallet (for permanent storage)
+1. Get AR tokens from exchanges like [KuCoin](https://www.kucoin.com/), [Gate.io](https://www.gate.io/), or [Binance](https://www.binance.com/)
+2. Transfer AR to your Arweave wallet address
+3. You need approximately 0.1-0.5 AR for each upload (cost varies with data size)
 
 ## 📖 Usage
 
@@ -189,15 +195,15 @@ python verify_proposal.py <tx_id> --output results.json
 
 1. **Proposal Input**: Accept JSON proposal via file, stdin, or example
 2. **Hash Computation**: Compute SHA256 hash of normalized JSON
-3. **IPFS Upload**: Upload proposal to IPFS and get CID
+3. **Arweave Upload**: Upload proposal to Arweave for permanent storage
 4. **Transaction Building**: Create Cardano transaction with metadata
 5. **Blockchain Submission**: Submit transaction to Cardano testnet
-6. **Confirmation**: Return transaction ID and metadata
+6. **Confirmation**: Return transaction ID and Arweave permanent URL
 
 ### Verification Process
 
 1. **Transaction Lookup**: Fetch transaction metadata from Blockfrost
-2. **IPFS Retrieval**: Download proposal using stored IPFS CID
+2. **Arweave Retrieval**: Download proposal using stored Arweave transaction ID
 3. **Hash Comparison**: Compute hash of retrieved proposal
 4. **Verification**: Compare computed hash with on-chain hash
 5. **Result**: Report success/failure with details
@@ -225,10 +231,20 @@ python wallet_utils.py --generate
 # Visit: https://testnets.cardano.org/en/testnets/cardano/tools/faucet/
 ```
 
-#### "IPFS connection failed"
+#### "Arweave key file not found"
 ```bash
-# Check your Infura credentials in .env
-# Ensure INFURA_PROJECT_ID and INFURA_PROJECT_SECRET are set
+# Create your Arweave wallet key file
+# Download from Arweave wallet or ArConnect
+# Save as arweave_key.json in the project directory
+```
+
+#### "Insufficient AR balance"
+```bash
+# Check your AR balance
+python arweave_utils.py --check-balance
+
+# Fund your Arweave wallet with AR tokens
+# You need approximately 0.1-0.5 AR per upload
 ```
 
 #### "Failed to submit transaction"
@@ -283,5 +299,8 @@ This is a prototype for educational and testing purposes only. Do not use for pr
 - [Cardano Documentation](https://docs.cardano.org/)
 - [PyCardano Documentation](https://pycardano.readthedocs.io/)
 - [Blockfrost API Documentation](https://docs.blockfrost.io/)
-- [IPFS Documentation](https://docs.ipfs.io/)
+- [Arweave Documentation](https://docs.arweave.org/)
+- [Arweave Wallet](https://www.arweave.org/wallet)
+- [ArConnect Browser Extension](https://arconnect.io/)
 - [Cardano Testnet Faucet](https://testnets.cardano.org/en/testnets/cardano/tools/faucet/)
+- [AR Token Exchanges](https://www.coingecko.com/en/coins/arweave)

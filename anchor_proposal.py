@@ -18,7 +18,7 @@ import time
 from typing import Dict, Any
 from pathlib import Path
 
-import ipfshttpclient
+from arweave_utils import ArweaveManager
 from pycardano import (
     TransactionBuilder, TransactionOutput, Value, 
     MultiAsset, Asset, UTxO, TransactionInput,
@@ -33,7 +33,7 @@ from pycardano.serialization import TransactionBody
 from pycardano.metadata import Metadata, TransactionMetadatum
 from blockfrost import BlockFrostApi
 
-from config import validate_config, BLOCKFROST_API_KEY, BLOCKFROST_NETWORK, METADATA_LABEL
+from config import validate_config, BLOCKFROST_API_KEY, BLOCKFROST_NETWORK, METADATA_LABEL, ARWEAVE_KEY_FILE, ARWEAVE_NETWORK
 from wallet_utils import WalletManager
 
 class ProposalAnchorer:
@@ -43,22 +43,18 @@ class ProposalAnchorer:
         validate_config()
         self.api = BlockFrostApi(project_id=BLOCKFROST_API_KEY, network=BLOCKFROST_NETWORK)
         self.wallet_manager = WalletManager()
-        self.ipfs_client = None
+        self.arweave_manager = ArweaveManager(key_file=ARWEAVE_KEY_FILE, network=ARWEAVE_NETWORK)
         
-    def connect_ipfs(self):
-        """Connect to IPFS via Infura."""
+    def connect_arweave(self):
+        """Connect to Arweave and load wallet."""
         try:
-            self.ipfs_client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
-        except:
-            # Fallback to Infura gateway
-            from config import INFURA_PROJECT_ID, INFURA_PROJECT_SECRET, IPFS_GATEWAY_URL
-            if INFURA_PROJECT_ID and INFURA_PROJECT_SECRET:
-                # Use Infura IPFS API
-                import requests
-                self.ipfs_gateway = f"https://ipfs.infura.io:5001/api/v0"
-                self.ipfs_auth = (INFURA_PROJECT_ID, INFURA_PROJECT_SECRET)
-            else:
-                raise Exception("IPFS connection failed. Please configure Infura credentials.")
+            self.arweave_manager.load_wallet()
+        except FileNotFoundError:
+            raise Exception("Arweave key file not found. Please create arweave_key.json with your Arweave wallet.")
+        except ValueError as e:
+            raise Exception(f"Invalid Arweave key file: {str(e)}")
+        except Exception as e:
+            raise Exception(f"Failed to connect to Arweave: {str(e)}")
     
     def compute_hash(self, proposal: Dict[str, Any]) -> str:
         """
@@ -79,51 +75,45 @@ class ProposalAnchorer:
         
         return hash_obj.hexdigest()
     
-    def upload_to_ipfs(self, proposal: Dict[str, Any]) -> str:
+    def upload_to_arweave(self, proposal: Dict[str, Any]) -> str:
         """
-        Upload proposal to IPFS and return CID.
+        Upload proposal to Arweave and return transaction ID.
         
         Args:
             proposal: Proposal dictionary
             
         Returns:
-            IPFS CID string
+            Arweave transaction ID string
         """
-        if not self.ipfs_client:
-            self.connect_ipfs()
+        if not self.arweave_manager.wallet:
+            self.connect_arweave()
         
         # Convert proposal to JSON string
         proposal_json = json.dumps(proposal, indent=2)
         
         try:
-            if hasattr(self, 'ipfs_gateway'):
-                # Use Infura IPFS API
-                import requests
-                files = {'file': ('proposal.json', proposal_json, 'application/json')}
-                response = requests.post(
-                    f"{self.ipfs_gateway}/add",
-                    files=files,
-                    auth=self.ipfs_auth,
-                    timeout=30
-                )
-                response.raise_for_status()
-                result = response.json()
-                return result['Hash']
-            else:
-                # Use local IPFS client
-                result = self.ipfs_client.add_str(proposal_json)
-                return result['Hash']
+            # Upload to Arweave with tags
+            tags = {
+                "Content-Type": "application/json",
+                "App-Name": "Cardano-Proposal-Anchoring",
+                "App-Version": "1.0.0",
+                "Proposal-Title": proposal.get("title", "Unknown"),
+                "Proposal-Proposer": proposal.get("proposer", "Unknown")
+            }
+            
+            tx_id = self.arweave_manager.upload_data(proposal_json, tags)
+            return tx_id
                 
         except Exception as e:
-            raise Exception(f"Failed to upload to IPFS: {str(e)}")
+            raise Exception(f"Failed to upload to Arweave: {str(e)}")
     
-    def create_metadata(self, proposal_hash: str, ipfs_cid: str) -> Metadata:
+    def create_metadata(self, proposal_hash: str, arweave_tx_id: str) -> Metadata:
         """
         Create Cardano transaction metadata.
         
         Args:
             proposal_hash: SHA256 hash of the proposal
-            ipfs_cid: IPFS CID of the proposal
+            arweave_tx_id: Arweave transaction ID of the proposal
             
         Returns:
             Metadata object
@@ -131,9 +121,11 @@ class ProposalAnchorer:
         metadata = {
             METADATA_LABEL: {
                 "proposal_hash": proposal_hash,
-                "ipfs_cid": ipfs_cid,
+                "arweave_tx_id": arweave_tx_id,
+                "arweave_url": f"https://arweave.net/{arweave_tx_id}",
                 "timestamp": int(time.time()),
-                "type": "community_proposal"
+                "type": "community_proposal",
+                "storage": "arweave"
             }
         }
         
@@ -217,12 +209,13 @@ class ProposalAnchorer:
         proposal_hash = self.compute_hash(proposal)
         print(f"✅ Hash computed: {proposal_hash}")
         
-        print("🔄 Uploading to IPFS...")
-        ipfs_cid = self.upload_to_ipfs(proposal)
-        print(f"✅ Uploaded to IPFS: {ipfs_cid}")
+        print("🔄 Uploading to Arweave...")
+        arweave_tx_id = self.upload_to_arweave(proposal)
+        print(f"✅ Uploaded to Arweave: {arweave_tx_id}")
+        print(f"🌐 Permanent URL: https://arweave.net/{arweave_tx_id}")
         
         print("🔄 Creating transaction metadata...")
-        metadata = self.create_metadata(proposal_hash, ipfs_cid)
+        metadata = self.create_metadata(proposal_hash, arweave_tx_id)
         
         print("🔄 Building and submitting transaction...")
         tx_id = self.build_transaction(metadata)
@@ -231,7 +224,8 @@ class ProposalAnchorer:
         return {
             "transaction_id": tx_id,
             "proposal_hash": proposal_hash,
-            "ipfs_cid": ipfs_cid,
+            "arweave_tx_id": arweave_tx_id,
+            "arweave_url": f"https://arweave.net/{arweave_tx_id}",
             "metadata_label": METADATA_LABEL
         }
 
@@ -313,7 +307,8 @@ def main():
         print("\n🎉 Proposal anchored successfully!")
         print(f"📋 Transaction ID: {result['transaction_id']}")
         print(f"🔐 Proposal Hash: {result['proposal_hash']}")
-        print(f"🌐 IPFS CID: {result['ipfs_cid']}")
+        print(f"🌐 Arweave TX ID: {result['arweave_tx_id']}")
+        print(f"🔗 Permanent URL: {result['arweave_url']}")
         print(f"🏷️  Metadata Label: {result['metadata_label']}")
         
         # Save results to file if requested

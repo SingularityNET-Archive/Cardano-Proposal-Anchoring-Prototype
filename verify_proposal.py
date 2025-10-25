@@ -16,11 +16,11 @@ import hashlib
 import sys
 from typing import Dict, Any, Optional
 
-import ipfshttpclient
+from arweave_utils import ArweaveManager
 import requests
 from blockfrost import BlockFrostApi
 
-from config import validate_config, BLOCKFROST_API_KEY, BLOCKFROST_NETWORK, METADATA_LABEL
+from config import validate_config, BLOCKFROST_API_KEY, BLOCKFROST_NETWORK, METADATA_LABEL, ARWEAVE_KEY_FILE, ARWEAVE_NETWORK
 
 class ProposalVerifier:
     """Handles proposal verification from Cardano blockchain."""
@@ -28,15 +28,18 @@ class ProposalVerifier:
     def __init__(self):
         validate_config()
         self.api = BlockFrostApi(project_id=BLOCKFROST_API_KEY, network=BLOCKFROST_NETWORK)
-        self.ipfs_client = None
+        self.arweave_manager = ArweaveManager(key_file=ARWEAVE_KEY_FILE, network=ARWEAVE_NETWORK)
         
-    def connect_ipfs(self):
-        """Connect to IPFS."""
+    def connect_arweave(self):
+        """Connect to Arweave and load wallet."""
         try:
-            self.ipfs_client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
-        except:
-            # Use public IPFS gateway as fallback
-            self.ipfs_gateway = "https://ipfs.io/ipfs/"
+            self.arweave_manager.load_wallet()
+        except FileNotFoundError:
+            raise Exception("Arweave key file not found. Please create arweave_key.json with your Arweave wallet.")
+        except ValueError as e:
+            raise Exception(f"Invalid Arweave key file: {str(e)}")
+        except Exception as e:
+            raise Exception(f"Failed to connect to Arweave: {str(e)}")
     
     def fetch_transaction_metadata(self, tx_id: str) -> Optional[Dict[str, Any]]:
         """
@@ -65,33 +68,26 @@ class ProposalVerifier:
         except Exception as e:
             raise Exception(f"Failed to fetch transaction metadata: {str(e)}")
     
-    def retrieve_proposal_from_ipfs(self, ipfs_cid: str) -> Dict[str, Any]:
+    def retrieve_proposal_from_arweave(self, arweave_tx_id: str) -> Dict[str, Any]:
         """
-        Retrieve proposal from IPFS.
+        Retrieve proposal from Arweave.
         
         Args:
-            ipfs_cid: IPFS CID of the proposal
+            arweave_tx_id: Arweave transaction ID of the proposal
             
         Returns:
             Proposal dictionary
         """
         try:
-            if hasattr(self, 'ipfs_gateway'):
-                # Use public IPFS gateway
-                url = f"{self.ipfs_gateway}{ipfs_cid}"
-                response = requests.get(url, timeout=30)
-                response.raise_for_status()
-                return response.json()
-            else:
-                # Use local IPFS client
-                if not self.ipfs_client:
-                    self.connect_ipfs()
-                
-                proposal_json = self.ipfs_client.cat(ipfs_cid)
-                return json.loads(proposal_json.decode('utf-8'))
+            if not self.arweave_manager.wallet:
+                self.connect_arweave()
+            
+            # Get data from Arweave
+            proposal_json = self.arweave_manager.get_data(arweave_tx_id)
+            return json.loads(proposal_json)
                 
         except Exception as e:
-            raise Exception(f"Failed to retrieve proposal from IPFS: {str(e)}")
+            raise Exception(f"Failed to retrieve proposal from Arweave: {str(e)}")
     
     def compute_hash(self, proposal: Dict[str, Any]) -> str:
         """
@@ -132,21 +128,24 @@ class ProposalVerifier:
         print("✅ Metadata retrieved from blockchain")
         print(f"📋 Metadata: {json.dumps(metadata, indent=2)}")
         
-        # Extract proposal hash and IPFS CID
+        # Extract proposal hash and Arweave transaction ID
         proposal_hash = metadata.get('proposal_hash')
-        ipfs_cid = metadata.get('ipfs_cid')
+        arweave_tx_id = metadata.get('arweave_tx_id')
+        arweave_url = metadata.get('arweave_url')
         timestamp = metadata.get('timestamp')
         
-        if not proposal_hash or not ipfs_cid:
-            raise Exception("Invalid metadata: missing proposal_hash or ipfs_cid")
+        if not proposal_hash or not arweave_tx_id:
+            raise Exception("Invalid metadata: missing proposal_hash or arweave_tx_id")
         
         print(f"🔐 On-chain hash: {proposal_hash}")
-        print(f"🌐 IPFS CID: {ipfs_cid}")
+        print(f"🌐 Arweave TX ID: {arweave_tx_id}")
+        if arweave_url:
+            print(f"🔗 Arweave URL: {arweave_url}")
         
-        # Retrieve proposal from IPFS
-        print("🔄 Retrieving proposal from IPFS...")
-        proposal = self.retrieve_proposal_from_ipfs(ipfs_cid)
-        print("✅ Proposal retrieved from IPFS")
+        # Retrieve proposal from Arweave
+        print("🔄 Retrieving proposal from Arweave...")
+        proposal = self.retrieve_proposal_from_arweave(arweave_tx_id)
+        print("✅ Proposal retrieved from Arweave")
         
         # Compute hash of retrieved proposal
         print("🔄 Computing hash of retrieved proposal...")
@@ -161,7 +160,8 @@ class ProposalVerifier:
             "verification_successful": hash_match,
             "on_chain_hash": proposal_hash,
             "computed_hash": computed_hash,
-            "ipfs_cid": ipfs_cid,
+            "arweave_tx_id": arweave_tx_id,
+            "arweave_url": arweave_url,
             "timestamp": timestamp,
             "proposal": proposal,
             "metadata": metadata
@@ -206,7 +206,9 @@ def main():
         print(f"\n📊 Verification Results:")
         print(f"   Transaction ID: {result['transaction_id']}")
         print(f"   Verification: {'✅ SUCCESS' if result['verification_successful'] else '❌ FAILED'}")
-        print(f"   IPFS CID: {result['ipfs_cid']}")
+        print(f"   Arweave TX ID: {result['arweave_tx_id']}")
+        if result['arweave_url']:
+            print(f"   Arweave URL: {result['arweave_url']}")
         print(f"   Timestamp: {result['timestamp']}")
         
         if args.show_proposal:

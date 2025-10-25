@@ -11,16 +11,16 @@ load_dotenv()
 BLOCKFROST_API_KEY = os.getenv('BLOCKFROST_API_KEY')
 BLOCKFROST_NETWORK = os.getenv('BLOCKFROST_NETWORK', 'testnet')
 
-# Infura IPFS configuration
-INFURA_PROJECT_ID = os.getenv('INFURA_PROJECT_ID')
-INFURA_PROJECT_SECRET = os.getenv('INFURA_PROJECT_SECRET')
+# Arweave configuration
+ARWEAVE_GATEWAY_URL = os.getenv('ARWEAVE_GATEWAY_URL', 'https://arweave.net')
+ARWEAVE_KEY_FILE = os.getenv('ARWEAVE_KEY_FILE', 'arweave_key.json')
 
 # Cardano network configuration
 CARDANO_NETWORK = os.getenv('CARDANO_NETWORK', 'testnet')
 METADATA_LABEL = int(os.getenv('METADATA_LABEL', '1337'))
 
-# IPFS gateway configuration
-IPFS_GATEWAY_URL = "https://ipfs.infura.io:5001"
+# Arweave network configuration
+ARWEAVE_NETWORK = os.getenv('ARWEAVE_NETWORK', 'mainnet')
 
 # Validation
 def validate_config():
@@ -29,10 +29,8 @@ def validate_config():
     
     if not BLOCKFROST_API_KEY:
         missing_vars.append('BLOCKFROST_API_KEY')
-    if not INFURA_PROJECT_ID:
-        missing_vars.append('INFURA_PROJECT_ID')
-    if not INFURA_PROJECT_SECRET:
-        missing_vars.append('INFURA_PROJECT_SECRET')
+    if not os.path.exists(ARWEAVE_KEY_FILE):
+        missing_vars.append(f'Arweave key file not found: {ARWEAVE_KEY_FILE}')
     
     if missing_vars:
         raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
