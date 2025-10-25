@@ -38,9 +38,10 @@ Edit `.env` with your credentials:
 BLOCKFROST_API_KEY=your_blockfrost_api_key_here
 BLOCKFROST_NETWORK=testnet
 
-# Infura IPFS Configuration
-INFURA_PROJECT_ID=your_infura_project_id_here
-INFURA_PROJECT_SECRET=your_infura_project_secret_here
+# Arweave Configuration
+ARWEAVE_GATEWAY_URL=https://arweave.net
+ARWEAVE_KEY_FILE=arweave_key.json
+ARWEAVE_NETWORK=mainnet
 
 # Cardano Network Configuration
 CARDANO_NETWORK=testnet
@@ -274,8 +275,10 @@ AI-Blockchain-Prototype/
 ├── wallet_utils.py          # Wallet management
 ├── anchor_proposal.py       # Proposal anchoring script
 ├── verify_proposal.py       # Proposal verification script
+├── arweave_utils.py         # Arweave utilities
 ├── wallet.json              # Generated wallet (keep secure!)
-└── wallet_mnemonic.txt      # Generated mnemonic (keep secure!)
+├── wallet_mnemonic.txt      # Generated mnemonic (keep secure!)
+└── arweave_key.json         # Arweave wallet key (keep secure!)
 ```
 
 ## 🤝 Contributing
