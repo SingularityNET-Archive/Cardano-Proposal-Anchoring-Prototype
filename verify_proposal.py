@@ -20,15 +20,18 @@ from arweave_utils import ArweaveManager
 import requests
 from blockfrost import BlockFrostApi
 
-from config import validate_config, BLOCKFROST_API_KEY, BLOCKFROST_NETWORK, METADATA_LABEL, ARWEAVE_KEY_FILE, ARWEAVE_NETWORK
+from config import validate_config, BLOCKFROST_API_KEY, BLOCKFROST_NETWORK, METADATA_LABEL, ARWEAVE_KEY_FILE, ARWEAVE_NETWORK, get_blockfrost_url
 
 class ProposalVerifier:
     """Handles proposal verification from Cardano blockchain."""
     
     def __init__(self):
         validate_config()
-        # BlockFrostApi auto-detects network from project_id prefix (mainnet/preview/preprod)
-        self.api = BlockFrostApi(project_id=BLOCKFROST_API_KEY)
+        # Explicitly set base_url to match the network (auto-detection doesn't always work)
+        self.api = BlockFrostApi(
+            project_id=BLOCKFROST_API_KEY,
+            base_url=get_blockfrost_url(BLOCKFROST_NETWORK)
+        )
         self.arweave_manager = ArweaveManager(key_file=ARWEAVE_KEY_FILE, network=ARWEAVE_NETWORK)
         
     def connect_arweave(self):

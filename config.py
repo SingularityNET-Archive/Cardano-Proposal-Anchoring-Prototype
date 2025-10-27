@@ -31,16 +31,16 @@ def get_blockfrost_url(network: str) -> str:
         network: Network name (mainnet, preview, preprod)
         
     Returns:
-        Blockfrost base URL (without /api/v0 suffix as SDK adds it automatically)
+        Blockfrost base URL (SDK will append /v0 automatically)
     """
     network = network.lower()
     
     if network == 'mainnet':
-        return "https://cardano-mainnet.blockfrost.io/api/v0"
+        return "https://cardano-mainnet.blockfrost.io/api"
     elif network == 'preview':
-        return "https://cardano-preview.blockfrost.io/api/v0"
+        return "https://cardano-preview.blockfrost.io/api"
     elif network == 'preprod':
-        return "https://cardano-preprod.blockfrost.io/api/v0"
+        return "https://cardano-preprod.blockfrost.io/api"
     else:
         raise ValueError(f"Unsupported network: {network}. Supported networks: mainnet, preview, preprod")
 
