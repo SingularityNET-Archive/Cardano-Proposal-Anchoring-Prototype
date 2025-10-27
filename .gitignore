@@ -45,6 +45,13 @@ wheels/
 *.egg
 MANIFEST
 
+# Logs and temporary files
+*.log
+*.txt
+!requirements.txt
+!wallet/README.md
+anchor_log.txt
+
 # IDE
 .vscode/
 .idea/
