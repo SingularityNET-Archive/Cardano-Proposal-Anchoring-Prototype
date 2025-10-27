@@ -92,7 +92,7 @@ This will create:
 
 #### Cardano Wallet (for transaction fees)
 1. Copy the payment address from the wallet generation output
-2. For **preview/preprod networks**: Visit the [Cardano Testnet Faucet](https://testnets.cardano.org/en/testnets/cardano/tools/faucet/)
+2. For **preview/preprod networks**: Visit the [Cardano Testnets Faucet](https://docs.cardano.org/cardano-testnets/tools/faucet)
 3. For **mainnet**: Transfer ADA from an exchange or wallet
 4. Request testnet ADA for your address (preview/preprod only)
 5. Wait for the transaction to confirm
@@ -257,7 +257,7 @@ python wallet_utils.py --generate
 #### "No UTxOs found"
 ```bash
 # Fund your wallet with ADA
-# Preview/Preprod: https://testnets.cardano.org/en/testnets/cardano/tools/faucet/
+# Preview/Preprod: https://docs.cardano.org/cardano-testnets/tools/faucet
 # Mainnet: Transfer ADA from exchange or wallet
 ```
 
@@ -343,5 +343,5 @@ This is a prototype for educational and testing purposes only. Do not use for pr
 - [Arweave Documentation](https://docs.arweave.org/)
 - [Arweave Wallet](https://www.arweave.org/wallet)
 - [ArConnect Browser Extension](https://arconnect.io/)
-- [Cardano Testnet Faucet](https://testnets.cardano.org/en/testnets/cardano/tools/faucet/)
+- [Cardano Testnets Faucet](https://docs.cardano.org/cardano-testnets/tools/faucet)
 - [AR Token Exchanges](https://www.coingecko.com/en/coins/arweave)
