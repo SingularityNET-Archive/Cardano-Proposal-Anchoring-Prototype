@@ -256,7 +256,13 @@ class ProposalAnchorer:
         
         print("🔄 Building and submitting transaction...")
         tx_id = self.build_transaction(metadata)
-        print(f"✅ Transaction submitted: {tx_id}")
+        
+        print(f"\n✅ Transaction submitted successfully!")
+        print(f"📋 Transaction ID: {tx_id}")
+        print(f"\n🔗 View on CardanoScan:")
+        print(f"   https://preprod.cardanoscan.io/transaction/{tx_id}")
+        print(f"\n⏰ Wait 30-60 seconds for confirmation, then verify:")
+        print(f"   python verify_proposal.py {tx_id}")
         
         return {
             "transaction_id": tx_id,
