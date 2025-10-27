@@ -145,7 +145,7 @@ class ProposalAnchorer:
         address = Address.from_primitive(wallet_data['address'])
         
         # Get UTxOs from Blockfrost
-        utxos = self.api.utxos(str(address))
+        utxos = self.api.address_utxos(str(address))
         if not utxos:
             raise Exception("No UTxOs found. Please fund your wallet with testnet ADA.")
         
