@@ -208,7 +208,9 @@ class ProposalAnchorer:
         
         # Submit transaction
         try:
-            tx_id = self.api.submit_transaction(transaction.to_cbor())
+            # Submit CBOR-encoded transaction to Blockfrost
+            tx_cbor = transaction.to_cbor()
+            tx_id = self.api.transaction_submit(tx_cbor)
             return tx_id
         except Exception as e:
             raise Exception(f"Failed to submit transaction: {str(e)}")
