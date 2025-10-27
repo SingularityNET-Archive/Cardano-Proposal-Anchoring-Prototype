@@ -1,16 +1,26 @@
 # Environment variables
 .env
 
-# Wallet files
-*.skey
-*.vkey
-wallet.json
-wallet_mnemonic.txt
+# Wallet files (root level - for backwards compatibility)
+/*.skey
+/*.vkey
+/wallet.json
+/wallet_mnemonic.txt
 
-# Arweave wallet key files (add your specific key file name)
+# Wallet directory (new organized location)
+wallet/*.json
+wallet/*.txt
+wallet/*.skey
+wallet/*.vkey
+!wallet/.gitkeep
+!wallet/README.md
+
+# Arweave wallet key files
 arweave_key.json
 *_arweave_*.json
 *.json
+!examples/*.json
+!package.json
 
 # Python
 __pycache__/

@@ -334,20 +334,46 @@ python -v anchor_proposal.py --example
 
 ```
 AI-Blockchain-Prototype/
-├── README.md                 # This file
-├── requirements.txt          # Python dependencies
-├── .env.example             # Environment template
-├── .gitignore               # Git ignore rules
-├── config.py                # Configuration management
-├── wallet_utils.py          # Wallet management
-├── anchor_proposal.py       # Proposal anchoring script
-├── verify_proposal.py       # Proposal verification script
-├── arweave_utils.py         # Arweave utilities
-├── check_arweave_balance.py # Check Arweave wallet balance
-├── wallet.json              # Generated wallet (keep secure!)
-├── wallet_mnemonic.txt      # Generated mnemonic (keep secure!)
-└── your_arweave_wallet_key.json  # Arweave key (keep secure!)
+├── README.md                    # This file
+├── requirements.txt             # Python dependencies
+├── setup.py                     # Package setup script
+├── .env.example                 # Environment template
+├── .gitignore                   # Git ignore rules
+│
+├── src/                         # 🔧 Source Code
+│   ├── config.py               # Configuration management
+│   ├── core/                   # Core functionality
+│   │   ├── wallet_utils.py     # Cardano wallet operations
+│   │   └── arweave_utils.py    # Arweave operations
+│   └── commands/               # CLI commands
+│       ├── anchor_proposal.py  # Proposal anchoring
+│       └── verify_proposal.py  # Proposal verification
+│
+├── scripts/                     # 🔨 Helper Scripts
+│   ├── check_status.py         # System status checker
+│   ├── check_arweave_balance.py # Check Arweave balance
+│   └── test_blockfrost.py      # Test Blockfrost API
+│
+├── docs/                        # 📚 Documentation
+│   ├── ARWEAVE_SETUP.md        # Arweave wallet guide
+│   ├── ARCHITECTURE.md         # System architecture
+│   ├── API.md                  # API reference
+│   └── TROUBLESHOOTING.md      # Troubleshooting guide
+│
+├── examples/                    # 📝 Usage Examples
+│   ├── example_proposal.json   # Sample proposal
+│   └── anchor_example.py       # Example script
+│
+├── tests/                       # 🧪 Tests
+│   └── (test files here)
+│
+└── wallet/                      # 💼 Wallet Storage
+    ├── wallet.json             # Generated wallet (keep secure!)
+    ├── wallet_mnemonic.txt     # Recovery phrase (keep secure!)
+    └── your_arweave_wallet_key.json # Arweave key (keep secure!)
 ```
+
+**Note:** For backwards compatibility, wrapper scripts exist in the root directory that call the organized code in `src/`.
 
 ## 🤝 Contributing
 

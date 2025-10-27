@@ -1,0 +1,10 @@
+{
+  "title": "Community Development Initiative",
+  "description": "A proposal to improve community infrastructure and engagement",
+  "proposer": "Community Lead",
+  "timestamp": 1703001600,
+  "category": "infrastructure",
+  "budget": 10000,
+  "duration_months": 6,
+  "beneficiaries": ["community_members", "local_businesses"]
+}
