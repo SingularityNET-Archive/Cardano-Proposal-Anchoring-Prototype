@@ -6,7 +6,7 @@ import os
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
-from core.wallet_utils import main
+from core.wallet_utils import main  # pyright: ignore[reportMissingImports]
 
 if __name__ == "__main__":
     main()
