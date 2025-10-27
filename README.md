@@ -42,6 +42,8 @@ Proposal JSON → Arweave Upload → Hash Computation → Cardano Transaction �
 
 ## 🚀 Quick Start
 
+> **⚠️ Important**: After repository reorganization, if you see `ModuleNotFoundError`, check the [QUICKSTART.md](QUICKSTART.md) guide for solutions!
+
 ### 1. Installation
 
 ```bash
