@@ -182,28 +182,28 @@ class ProposalAnchorer:
         # Create transaction builder with chain context
         builder = TransactionBuilder(context=self.context)
         
-        # Add inputs
+        # Add inputs (UTxOs from wallet)
         for utxo in utxo_list:
             builder.add_input(utxo)
         
-        # Add output (send ADA back to self with minimum amount)
-        min_ada = 1000000  # 1 ADA in lovelace
-        builder.add_output(
-            TransactionOutput(
-                address=address,
-                amount=Value(min_ada)
-            )
-        )
+        # Set change address (where excess ADA will be returned)
+        # This is crucial for balancing the transaction
+        builder.change_address = address
         
-        # Add metadata
-        builder.metadata = metadata
+        # Add metadata (this is the main purpose - no additional outputs needed)
+        builder.auxiliary_data = metadata
         
         # Load payment signing key from CBOR hex
         payment_skey = PaymentSigningKey.from_cbor(wallet_data['payment_skey'])
         
         # Build and sign transaction
+        # The builder will automatically:
+        # - Calculate fees
+        # - Create change output back to change_address
+        # - Balance inputs and outputs
         transaction = builder.build_and_sign(
-            signing_keys=[payment_skey]
+            signing_keys=[payment_skey],
+            change_address=address
         )
         
         # Submit transaction
