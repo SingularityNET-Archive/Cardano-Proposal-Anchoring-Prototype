@@ -31,7 +31,7 @@ def get_blockfrost_url(network: str) -> str:
         network: Network name (mainnet, preview, preprod)
         
     Returns:
-        Blockfrost base URL
+        Blockfrost base URL (without /api/v0 suffix as SDK adds it automatically)
     """
     network = network.lower()
     
