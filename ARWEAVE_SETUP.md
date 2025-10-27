@@ -4,14 +4,16 @@
 
 Your `.env` file should contain:
 ```env
-ARWEAVE_KEY_FILE=OatfYocKDZKkN0SINc3qhHB39CUb4NtHxUKuryyAwxc.json
+ARWEAVE_KEY_FILE=your_arweave_wallet_key.json
 ```
+
+Replace `your_arweave_wallet_key.json` with your actual Arweave key file name.
 
 ## Quick Setup Checklist
 
-- [x] Downloaded Arweave key file: `OatfYocKDZKkN0SINc3qhHB39CUb4NtHxUKuryyAwxc.json`
+- [ ] Downloaded Arweave key file (e.g., `your_arweave_wallet_key.json`)
 - [ ] Placed key file in project directory
-- [ ] Updated `.env` with `ARWEAVE_KEY_FILE=OatfYocKDZKkN0SINc3qhHB39CUb4NtHxUKuryyAwxc.json`
+- [ ] Updated `.env` with `ARWEAVE_KEY_FILE=your_arweave_wallet_key.json`
 - [ ] Checked wallet balance: `python check_arweave_balance.py`
 - [ ] Funded wallet with AR tokens (if needed)
 
@@ -65,7 +67,7 @@ python anchor_proposal.py --example
 ### "Arweave key file not found"
 ```bash
 # Check if file exists
-ls -la OatfYocKDZKkN0SINc3qhHB39CUb4NtHxUKuryyAwxc.json
+ls -la your_arweave_wallet_key.json
 
 # Verify .env configuration
 cat .env | grep ARWEAVE_KEY_FILE
@@ -83,7 +85,7 @@ python check_arweave_balance.py
 ### "Invalid key file format"
 ```bash
 # Verify JSON format
-python -c "import json; print(json.load(open('OatfYocKDZKkN0SINc3qhHB39CUb4NtHxUKuryyAwxc.json')))"
+python -c "import json; print(json.load(open('your_arweave_wallet_key.json')))"
 ```
 
 ## Security Notes

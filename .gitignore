@@ -6,9 +6,10 @@
 *.vkey
 wallet.json
 wallet_mnemonic.txt
+
+# Arweave wallet key files (add your specific key file name)
 arweave_key.json
-# Arweave wallet key files
-OatfYocKDZKkN0SINc3qhHB39CUb4NtHxUKuryyAwxc.json
+*_arweave_*.json
 *.json
 
 # Python

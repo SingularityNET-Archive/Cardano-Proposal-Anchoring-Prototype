@@ -47,7 +47,7 @@ BLOCKFROST_NETWORK=preview
 
 # Arweave Configuration
 ARWEAVE_GATEWAY_URL=https://arweave.net
-ARWEAVE_KEY_FILE=OatfYocKDZKkN0SINc3qhHB39CUb4NtHxUKuryyAwxc.json
+ARWEAVE_KEY_FILE=your_arweave_wallet_key.json
 ARWEAVE_NETWORK=mainnet
 
 # Cardano Network Configuration
@@ -67,11 +67,11 @@ METADATA_LABEL=1337
 #### Arweave Wallet
 1. Visit [Arweave.org](https://www.arweave.org/)
 2. Download the Arweave wallet or use [ArConnect](https://arconnect.io/)
-3. Create a new wallet and download the key file (e.g., `OatfYocKDZKkN0SINc3qhHB39CUb4NtHxUKuryyAwxc.json`)
+3. Create a new wallet and download the key file (e.g., `your_arweave_wallet_key.json`)
 4. Save the key file in your project directory
 5. Update `.env` with your key file name:
    ```
-   ARWEAVE_KEY_FILE=OatfYocKDZKkN0SINc3qhHB39CUb4NtHxUKuryyAwxc.json
+   ARWEAVE_KEY_FILE=your_arweave_wallet_key.json
    ```
 6. Fund your wallet with AR tokens (see funding instructions below)
 
@@ -266,7 +266,7 @@ python wallet_utils.py --generate
 # Download your Arweave wallet key file from Arweave.org or ArConnect
 # Save it in the project directory
 # Update .env with the exact filename:
-# ARWEAVE_KEY_FILE=OatfYocKDZKkN0SINc3qhHB39CUb4NtHxUKuryyAwxc.json
+# ARWEAVE_KEY_FILE=your_arweave_wallet_key.json
 
 # Check if the file exists
 ls -la *.json
@@ -278,7 +278,7 @@ ls -la *.json
 python check_arweave_balance.py
 
 # Or use arweave_utils directly
-python arweave_utils.py --check-balance --key-file OatfYocKDZKkN0SINc3qhHB39CUb4NtHxUKuryyAwxc.json
+python arweave_utils.py --check-balance --key-file your_arweave_wallet_key.json
 
 # Fund your Arweave wallet with AR tokens
 # You need approximately 0.1-0.5 AR per upload
@@ -316,7 +316,7 @@ AI-Blockchain-Prototype/
 ├── check_arweave_balance.py # Check Arweave wallet balance
 ├── wallet.json              # Generated wallet (keep secure!)
 ├── wallet_mnemonic.txt      # Generated mnemonic (keep secure!)
-└── OatfYocKDZKkN0SINc3qhHB39CUb4NtHxUKuryyAwxc.json  # Arweave key (keep secure!)
+└── your_arweave_wallet_key.json  # Arweave key (keep secure!)
 ```
 
 ## 🤝 Contributing
