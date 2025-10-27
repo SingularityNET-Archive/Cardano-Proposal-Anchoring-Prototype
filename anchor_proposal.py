@@ -137,7 +137,7 @@ class ProposalAnchorer:
         
         # Create Metadata object and wrap in AuxiliaryData
         metadata = Metadata(metadata_dict)
-        return AuxiliaryData(metadata=metadata)
+        return AuxiliaryData(data=metadata)
     
     def build_transaction(self, auxiliary_data: AuxiliaryData) -> str:
         """
