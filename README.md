@@ -1,6 +1,36 @@
 # Cardano Proposal Anchoring Prototype
 
+[![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Cardano](https://img.shields.io/badge/Cardano-Testnet-0033AD?style=for-the-badge&logo=cardano&logoColor=white)](https://cardano.org/)
+[![PyCardano](https://img.shields.io/badge/PyCardano-Latest-00ADD8?style=for-the-badge)](https://pycardano.readthedocs.io/)
+[![Blockfrost](https://img.shields.io/badge/Blockfrost-API-4285F4?style=for-the-badge)](https://blockfrost.io/)
+[![Arweave](https://img.shields.io/badge/Arweave-Permanent_Storage-222222?style=for-the-badge&logo=arweave&logoColor=white)](https://arweave.org/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Production_Ready-success?style=for-the-badge)]()
+
 A minimal working Python prototype that anchors community proposals to the Cardano blockchain using Blockfrost and PyCardano. The system uploads proposals to Arweave for permanent storage, computes SHA256 hashes, and anchors them as metadata in Cardano transactions on the testnet.
+
+## 📑 Table of Contents
+
+- [Key Features](#-key-features)
+- [Architecture](#️-architecture)
+- [Quick Start](#-quick-start)
+- [Usage](#-usage)
+- [How It Works](#-how-it-works)
+- [Troubleshooting](#-troubleshooting)
+- [Project Structure](#-project-structure)
+- [Useful Links](#-useful-links)
+
+## ✨ Key Features
+
+- 🔐 **Immutable Anchoring** - Proposals permanently stored on Cardano blockchain
+- 🌐 **Permanent Storage** - Arweave integration for decentralized, permanent data storage
+- 🔍 **Verifiable Integrity** - SHA256 hashing ensures data hasn't been tampered with
+- ⚡ **Simple CLI** - Easy-to-use command-line interface for anchoring and verification
+- 🔑 **Secure Wallets** - Built-in wallet generation and management
+- 📊 **Metadata Support** - Rich metadata stored on-chain for easy retrieval
+- 🌍 **Testnet Ready** - Works with Cardano preview and preprod testnets
+- 🎯 **Production Ready** - Fully tested and operational with comprehensive error handling
 
 ## 🏗️ Architecture
 
