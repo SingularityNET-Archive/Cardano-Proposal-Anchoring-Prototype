@@ -24,7 +24,8 @@ from pycardano import (
     MultiAsset, Asset, UTxO, TransactionInput,
     PlutusData, Datum, Redeemer, ScriptHash,
     Network, Address, PaymentKeyPair, StakeKeyPair,
-    Transaction, TransactionBody, Metadata
+    Transaction, TransactionBody, Metadata,
+    BlockFrostChainContext
 )
 from blockfrost import BlockFrostApi
 
@@ -38,6 +39,11 @@ class ProposalAnchorer:
         validate_config()
         # Explicitly set base_url to match the network (auto-detection doesn't always work)
         self.api = BlockFrostApi(
+            project_id=BLOCKFROST_API_KEY,
+            base_url=get_blockfrost_url(BLOCKFROST_NETWORK)
+        )
+        # Create chain context for transaction building
+        self.context = BlockFrostChainContext(
             project_id=BLOCKFROST_API_KEY,
             base_url=get_blockfrost_url(BLOCKFROST_NETWORK)
         )
@@ -172,8 +178,8 @@ class ProposalAnchorer:
             ])
             utxo_list.append(UTxO(tx_input, tx_output))
         
-        # Create transaction builder
-        builder = TransactionBuilder()
+        # Create transaction builder with chain context
+        builder = TransactionBuilder(context=self.context)
         
         # Add inputs
         for utxo in utxo_list:
