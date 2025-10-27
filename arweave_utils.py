@@ -5,7 +5,7 @@ import json
 import os
 from typing import Dict, Any, Optional
 import arweave
-from arweave.wallet import Wallet
+from arweave import Wallet
 
 class ArweaveManager:
     """Manages Arweave operations for the prototype."""

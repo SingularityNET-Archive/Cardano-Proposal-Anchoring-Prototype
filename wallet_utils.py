@@ -6,11 +6,8 @@ import os
 from typing import Optional, Tuple
 from pycardano import (
     PaymentKeyPair, StakeKeyPair, Address, Network,
-    ExtendedSigningKey, ExtendedVerificationKey
-)
-from pycardano.crypto import bech32
-from pycardano.key import ExtendedSigningKey, ExtendedVerificationKey
-from pycardano.wallet import Wallet
+    ExtendedSigningKey, ExtendedVerificationKey, HDWallet
+)  # pyright: ignore[reportMissingImports]
 
 class WalletManager:
     """Manages Cardano wallet operations for the prototype."""
@@ -33,8 +30,8 @@ class WalletManager:
         
         # Create address
         address = Address(
-            payment_part=payment_key_pair.vkey.hash(),
-            staking_part=stake_key_pair.vkey.hash(),
+            payment_part=payment_key_pair.verification_key.hash(),
+            staking_part=stake_key_pair.verification_key.hash(),
             network=self.network
         )
         
@@ -43,10 +40,10 @@ class WalletManager:
         
         # Save wallet data
         wallet_data = {
-            "payment_vkey": payment_key_pair.vkey.to_cbor_hex(),
-            "payment_skey": payment_key_pair.skey.to_cbor_hex(),
-            "stake_vkey": stake_key_pair.vkey.to_cbor_hex(),
-            "stake_skey": stake_key_pair.skey.to_cbor_hex(),
+            "payment_vkey": payment_key_pair.verification_key.to_cbor_hex(),
+            "payment_skey": payment_key_pair.signing_key.to_cbor_hex(),
+            "stake_vkey": stake_key_pair.verification_key.to_cbor_hex(),
+            "stake_skey": stake_key_pair.signing_key.to_cbor_hex(),
             "address": str(address),
             "network": str(self.network)
         }

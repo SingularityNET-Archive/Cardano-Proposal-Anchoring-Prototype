@@ -19,8 +19,15 @@ Proposal JSON → Arweave Upload → Hash Computation → Cardano Transaction �
 git clone <repository-url>
 cd AI-Blockchain-Prototype
 
+# Create virtual environment (recommended)
+python3 -m venv venv
+source venv/bin/activate
+
 # Install dependencies
 pip install -r requirements.txt
+
+# Run setup script to verify installation
+python setup.py
 ```
 
 ### 2. Configuration
@@ -221,6 +228,18 @@ python verify_proposal.py <tx_id> --output results.json
 ## 🐛 Troubleshooting
 
 ### Common Issues
+
+#### "python: command not found"
+```bash
+# Use python3 instead of python
+python3 wallet_utils.py --generate
+python3 anchor_proposal.py --example
+python3 verify_proposal.py <tx_id>
+
+# Or create an alias in your shell
+echo 'alias python=python3' >> ~/.zshrc
+source ~/.zshrc
+```
 
 #### "No wallet found"
 ```bash
