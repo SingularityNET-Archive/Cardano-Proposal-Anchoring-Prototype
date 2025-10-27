@@ -5,9 +5,13 @@ Comprehensive status check for the Cardano Proposal Anchoring Prototype.
 
 import sys
 import os
-from arweave_utils import ArweaveManager
-from wallet_utils import WalletManager
-from config import (
+
+# Add parent directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+from src.core.arweave_utils import ArweaveManager
+from src.core.wallet_utils import WalletManager
+from src.config import (
     BLOCKFROST_API_KEY, BLOCKFROST_NETWORK, 
     ARWEAVE_KEY_FILE, ARWEAVE_NETWORK,
     CARDANO_NETWORK, METADATA_LABEL

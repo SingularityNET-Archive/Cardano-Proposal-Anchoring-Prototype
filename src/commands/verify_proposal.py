@@ -16,11 +16,11 @@ import hashlib
 import sys
 from typing import Dict, Any, Optional
 
-from arweave_utils import ArweaveManager
+from src.core.arweave_utils import ArweaveManager
 import requests
 from blockfrost import BlockFrostApi
 
-from config import validate_config, BLOCKFROST_API_KEY, BLOCKFROST_NETWORK, METADATA_LABEL, ARWEAVE_KEY_FILE, ARWEAVE_NETWORK, get_blockfrost_url
+from src.config import validate_config, BLOCKFROST_API_KEY, BLOCKFROST_NETWORK, METADATA_LABEL, ARWEAVE_KEY_FILE, ARWEAVE_NETWORK, get_blockfrost_url
 
 class ProposalVerifier:
     """Handles proposal verification from Cardano blockchain."""

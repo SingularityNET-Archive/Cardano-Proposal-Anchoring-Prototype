@@ -18,7 +18,7 @@ import time
 from typing import Dict, Any
 from pathlib import Path
 
-from arweave_utils import ArweaveManager
+from src.core.arweave_utils import ArweaveManager
 from pycardano import (
     TransactionBuilder, TransactionOutput, Value, 
     MultiAsset, Asset, UTxO, TransactionInput,
@@ -30,8 +30,8 @@ from pycardano import (
 )
 from blockfrost import BlockFrostApi
 
-from config import validate_config, BLOCKFROST_API_KEY, BLOCKFROST_NETWORK, METADATA_LABEL, ARWEAVE_KEY_FILE, ARWEAVE_NETWORK, get_blockfrost_url
-from wallet_utils import WalletManager
+from src.config import validate_config, BLOCKFROST_API_KEY, BLOCKFROST_NETWORK, METADATA_LABEL, ARWEAVE_KEY_FILE, ARWEAVE_NETWORK, get_blockfrost_url
+from src.core.wallet_utils import WalletManager
 
 class ProposalAnchorer:
     """Handles proposal anchoring to Cardano blockchain."""

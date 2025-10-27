@@ -4,8 +4,13 @@ Quick script to check Arweave wallet balance.
 """
 
 import sys
-from arweave_utils import ArweaveManager
-from config import ARWEAVE_KEY_FILE, ARWEAVE_NETWORK
+import os
+
+# Add parent directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+from src.core.arweave_utils import ArweaveManager
+from src.config import ARWEAVE_KEY_FILE, ARWEAVE_NETWORK
 
 def main():
     print(f"🔍 Checking Arweave Wallet Balance")
