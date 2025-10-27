@@ -24,6 +24,7 @@ from pycardano import (
     MultiAsset, Asset, UTxO, TransactionInput,
     PlutusData, Datum, Redeemer, ScriptHash,
     Network, Address, PaymentKeyPair, StakeKeyPair,
+    PaymentSigningKey, StakeSigningKey,
     Transaction, TransactionBody, Metadata,
     BlockFrostChainContext
 )
@@ -197,9 +198,12 @@ class ProposalAnchorer:
         # Add metadata
         builder.metadata = metadata
         
-        # Build transaction
+        # Load payment signing key from CBOR hex
+        payment_skey = PaymentSigningKey.from_cbor(wallet_data['payment_skey'])
+        
+        # Build and sign transaction
         transaction = builder.build_and_sign(
-            [PaymentKeyPair.from_json(wallet_data['payment_skey'])]
+            signing_keys=[payment_skey]
         )
         
         # Submit transaction
