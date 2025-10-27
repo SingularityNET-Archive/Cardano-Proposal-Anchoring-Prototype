@@ -157,9 +157,18 @@ class ProposalAnchorer:
         utxo_list = []
         for utxo in utxos:
             tx_input = TransactionInput.from_primitive([utxo.tx_hash, utxo.output_index])
+            
+            # Convert Blockfrost amount format to lovelace integer
+            # utxo.amount is a list like [{'unit': 'lovelace', 'quantity': '10000000'}]
+            lovelace_amount = 0
+            for amount_item in utxo.amount:
+                if amount_item.unit == 'lovelace':
+                    lovelace_amount = int(amount_item.quantity)
+                    break
+            
             tx_output = TransactionOutput.from_primitive([
                 utxo.address,
-                utxo.amount
+                lovelace_amount
             ])
             utxo_list.append(UTxO(tx_input, tx_output))
         
