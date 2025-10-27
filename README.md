@@ -36,7 +36,7 @@ Edit `.env` with your credentials:
 ```env
 # Blockfrost API Configuration
 BLOCKFROST_API_KEY=your_blockfrost_api_key_here
-BLOCKFROST_NETWORK=testnet
+BLOCKFROST_NETWORK=preview
 
 # Arweave Configuration
 ARWEAVE_GATEWAY_URL=https://arweave.net
@@ -53,8 +53,9 @@ METADATA_LABEL=1337
 #### Blockfrost API Key
 1. Visit [Blockfrost.io](https://blockfrost.io/)
 2. Sign up for a free account
-3. Create a new project for Cardano testnet
+3. Create a new project for Cardano (choose mainnet, preview, or preprod)
 4. Copy your API key to `.env`
+5. Set `BLOCKFROST_NETWORK` to match your project (mainnet/preview/preprod)
 
 #### Arweave Wallet
 1. Visit [Arweave.org](https://www.arweave.org/)
@@ -77,9 +78,10 @@ This will create:
 
 #### Cardano Wallet (for transaction fees)
 1. Copy the payment address from the wallet generation output
-2. Visit the [Cardano Testnet Faucet](https://testnets.cardano.org/en/testnets/cardano/tools/faucet/)
-3. Request testnet ADA for your address
-4. Wait for the transaction to confirm
+2. For **preview/preprod networks**: Visit the [Cardano Testnet Faucet](https://testnets.cardano.org/en/testnets/cardano/tools/faucet/)
+3. For **mainnet**: Transfer ADA from an exchange or wallet
+4. Request testnet ADA for your address (preview/preprod only)
+5. Wait for the transaction to confirm
 
 #### Arweave Wallet (for permanent storage)
 1. Get AR tokens from exchanges like [KuCoin](https://www.kucoin.com/), [Gate.io](https://www.gate.io/), or [Binance](https://www.binance.com/)
@@ -228,8 +230,9 @@ python wallet_utils.py --generate
 
 #### "No UTxOs found"
 ```bash
-# Fund your wallet with testnet ADA
-# Visit: https://testnets.cardano.org/en/testnets/cardano/tools/faucet/
+# Fund your wallet with ADA
+# Preview/Preprod: https://testnets.cardano.org/en/testnets/cardano/tools/faucet/
+# Mainnet: Transfer ADA from exchange or wallet
 ```
 
 #### "Arweave key file not found"
@@ -252,7 +255,8 @@ python arweave_utils.py --check-balance
 ```bash
 # Check your Blockfrost API key
 # Ensure you have sufficient ADA in your wallet
-# Verify network configuration (testnet)
+# Verify network configuration (mainnet/preview/preprod)
+# Ensure your API key matches the selected network
 ```
 
 ### Debug Mode
