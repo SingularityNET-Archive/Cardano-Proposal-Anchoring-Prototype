@@ -208,9 +208,24 @@ class ProposalAnchorer:
         
         # Submit transaction
         try:
-            # Submit CBOR-encoded transaction to Blockfrost
-            tx_cbor = transaction.to_cbor()
-            tx_id = self.api.transaction_submit(tx_cbor)
+            # Get CBOR bytes and convert to hex string for Blockfrost
+            tx_cbor_bytes = transaction.to_cbor()
+            
+            # Convert bytes to hex string if needed
+            if isinstance(tx_cbor_bytes, bytes):
+                tx_cbor_hex = tx_cbor_bytes.hex()
+            else:
+                tx_cbor_hex = tx_cbor_bytes
+            
+            # Submit using transaction_submit_cbor (accepts hex string)
+            result = self.api.transaction_submit_cbor(tx_cbor_hex)
+            
+            # Extract transaction ID from result
+            if isinstance(result, dict):
+                tx_id = result.get('tx_hash') or result.get('id') or result
+            else:
+                tx_id = str(result)
+                
             return tx_id
         except Exception as e:
             raise Exception(f"Failed to submit transaction: {str(e)}")
