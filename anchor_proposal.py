@@ -25,7 +25,7 @@ from pycardano import (
     PlutusData, Datum, Redeemer, ScriptHash,
     Network, Address, PaymentKeyPair, StakeKeyPair,
     PaymentSigningKey, StakeSigningKey,
-    Transaction, TransactionBody, Metadata,
+    Transaction, TransactionBody, Metadata, AuxiliaryData,
     BlockFrostChainContext
 )
 from blockfrost import BlockFrostApi
@@ -113,18 +113,18 @@ class ProposalAnchorer:
         except Exception as e:
             raise Exception(f"Failed to upload to Arweave: {str(e)}")
     
-    def create_metadata(self, proposal_hash: str, arweave_tx_id: str) -> Metadata:
+    def create_metadata(self, proposal_hash: str, arweave_tx_id: str) -> AuxiliaryData:
         """
-        Create Cardano transaction metadata.
+        Create Cardano transaction metadata as AuxiliaryData.
         
         Args:
             proposal_hash: SHA256 hash of the proposal
             arweave_tx_id: Arweave transaction ID of the proposal
             
         Returns:
-            Metadata object
+            AuxiliaryData object containing metadata
         """
-        metadata = {
+        metadata_dict = {
             METADATA_LABEL: {
                 "proposal_hash": proposal_hash,
                 "arweave_tx_id": arweave_tx_id,
@@ -135,14 +135,16 @@ class ProposalAnchorer:
             }
         }
         
-        return Metadata(metadata)
+        # Create Metadata object and wrap in AuxiliaryData
+        metadata = Metadata(metadata_dict)
+        return AuxiliaryData(metadata=metadata)
     
-    def build_transaction(self, metadata: Metadata) -> str:
+    def build_transaction(self, auxiliary_data: AuxiliaryData) -> str:
         """
         Build and submit Cardano transaction with metadata.
         
         Args:
-            metadata: Transaction metadata
+            auxiliary_data: AuxiliaryData containing transaction metadata
             
         Returns:
             Transaction ID
@@ -191,7 +193,7 @@ class ProposalAnchorer:
         builder.change_address = address
         
         # Add metadata (this is the main purpose - no additional outputs needed)
-        builder.auxiliary_data = metadata
+        builder.auxiliary_data = auxiliary_data
         
         # Load payment signing key from CBOR hex
         payment_skey = PaymentSigningKey.from_cbor(wallet_data['payment_skey'])
