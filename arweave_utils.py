@@ -38,14 +38,8 @@ class ArweaveManager:
             if not isinstance(key_data, dict):
                 raise ValueError("Invalid key file format: must be JSON object")
             
-            # Create wallet from key data
-            self.wallet = Wallet(key_data)
-            
-            # Initialize Arweave client
-            if self.network == "testnet":
-                self.arweave_client = arweave.Arweave(host="arweave.net", port=443, protocol="https")
-            else:
-                self.arweave_client = arweave.Arweave(host="arweave.net", port=443, protocol="https")
+            # Create wallet from key file path (Arweave SDK expects file path)
+            self.wallet = Wallet(self.key_file)
             
             return self.wallet
             
@@ -68,8 +62,9 @@ class ArweaveManager:
             raise Exception("Wallet not loaded. Call load_wallet() first.")
         
         try:
-            balance = self.arweave_client.wallets.get_balance(self.wallet.address)
-            return float(balance) / 1000000000000  # Convert from winston to AR
+            # Get balance directly from wallet (returns in winston)
+            balance_winston = self.wallet.balance
+            return float(balance_winston) / 1000000000000  # Convert from winston to AR
         except Exception as e:
             raise Exception(f"Failed to get wallet balance: {str(e)}")
     
@@ -123,16 +118,17 @@ class ArweaveManager:
                 "App-Version": "1.0.0"
             })
             
-            # Upload data
-            tx = self.arweave_client.create_transaction(
-                data=data,
-                wallet=self.wallet,
-                tags=tags
-            )
+            # Create and send transaction
+            from arweave import Transaction
+            tx = Transaction(self.wallet, data=proposal_json.encode('utf-8'))
             
-            # Sign and submit transaction
+            # Add tags to transaction
+            for key, value in tags.items():
+                tx.add_tag(key, value)
+            
+            # Sign and send
             tx.sign()
-            self.arweave_client.transactions.post(tx)
+            tx.send()
             
             return tx.id
             
@@ -153,9 +149,12 @@ class ArweaveManager:
             Exception: If retrieval fails
         """
         try:
-            # Get transaction data
-            data = self.arweave_client.transactions.get_data(transaction_id)
-            return data.decode('utf-8')
+            # Fetch data from Arweave gateway
+            import requests
+            url = f"https://arweave.net/{transaction_id}"
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+            return response.text
         except Exception as e:
             raise Exception(f"Failed to retrieve data from Arweave: {str(e)}")
     
@@ -170,17 +169,11 @@ class ArweaveManager:
             Transaction information dictionary
         """
         try:
-            tx = self.arweave_client.transactions.get(transaction_id)
-            return {
-                "id": tx.id,
-                "owner": tx.owner,
-                "target": tx.target,
-                "quantity": tx.quantity,
-                "reward": tx.reward,
-                "tags": {tag.name: tag.value for tag in tx.tags},
-                "block": tx.block,
-                "signature": tx.signature
-            }
+            import requests
+            url = f"https://arweave.net/tx/{transaction_id}"
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+            return response.json()
         except Exception as e:
             raise Exception(f"Failed to get transaction info: {str(e)}")
     

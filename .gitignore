@@ -7,6 +7,9 @@
 wallet.json
 wallet_mnemonic.txt
 arweave_key.json
+# Arweave wallet key files
+OatfYocKDZKkN0SINc3qhHB39CUb4NtHxUKuryyAwxc.json
+*.json
 
 # Python
 __pycache__/
