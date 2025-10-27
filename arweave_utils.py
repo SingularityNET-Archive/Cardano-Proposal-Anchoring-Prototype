@@ -62,9 +62,9 @@ class ArweaveManager:
             raise Exception("Wallet not loaded. Call load_wallet() first.")
         
         try:
-            # Get balance directly from wallet (returns in winston)
-            balance_winston = self.wallet.balance
-            return float(balance_winston) / 1000000000000  # Convert from winston to AR
+            # Get balance directly from wallet (already returns in AR, not winston)
+            balance_ar = self.wallet.balance
+            return float(balance_ar)
         except Exception as e:
             raise Exception(f"Failed to get wallet balance: {str(e)}")
     
@@ -120,7 +120,7 @@ class ArweaveManager:
             
             # Create and send transaction
             from arweave import Transaction
-            tx = Transaction(self.wallet, data=proposal_json.encode('utf-8'))
+            tx = Transaction(self.wallet, data=data.encode('utf-8'))
             
             # Add tags to transaction
             for key, value in tags.items():
